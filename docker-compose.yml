@@ -1,0 +1,102 @@
+name: containers
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: docker.1ms.run/zookeeper:3.9.4
+    restart: unless-stopped
+    ports:
+      - '2181:2181'
+    volumes:
+      - 'zookeeper_data:/data'
+      - 'zookeeper_datalog:/datalog'
+      - 'zookeeper_logs:/logs'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
+  mysql:
+    container_name: mysql
+    image: docker.1ms.run/mysql:9.6.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "3306:3306"
+    volumes:
+      - 'mysql_data:/var/lib/mysql'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
+  redis:
+    container_name: redis
+    image: docker.1ms.run/redis:8.4.0
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - 'redis_data:/data'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
+  rabbitmq:
+    container_name: rabbitmq
+    image: docker.1ms.run/rabbitmq:4.1.8-management
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - 'rabbitmq_data:/var/lib/rabbitmq'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.1ms.run/elasticsearch:9.2.4
+    restart: unless-stopped
+    environment:
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    ports:
+      - "9200:9200"
+    volumes:
+      - 'elasticsearch_data:/usr/share/elasticsearch/data'
+      - 'elasticsearch_plugins:/usr/share/elasticsearch/plugins'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
+volumes:
+  zookeeper_data:
+    name: containers.zookeeper.data
+    driver: local
+  zookeeper_datalog:
+    name: containers.zookeeper.datalog
+    driver: local
+  zookeeper_logs:
+    name: containers.zookeeper.logs
+    driver: local
+  mysql_data:
+    name: containers.mysql.data
+    driver: local
+  redis_data:
+    name: containers.redis.data
+    driver: local
+  rabbitmq_data:
+    name: containers.rabbitmq.data
+    driver: local
+  elasticsearch_data:
+    name: containers.elasticsearch.data
+    driver: local
+  elasticsearch_plugins:
+    name: containers.elasticsearch.plugins
+    driver: local
