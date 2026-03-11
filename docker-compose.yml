@@ -90,6 +90,25 @@ services:
         limits:
           cpus: 1
           memory: 2G
+  n8n:
+    container_name: n8n
+    image: n8nio/n8n:2.12.0
+    restart: unless-stopped
+    environment:
+      - GENERIC_TIMEZONE=Asia/Shanghai
+      - TZ=Asia/Shanghai
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_SECURE_COOKIE=false
+    ports:
+      - "5678:5678"
+    volumes:
+      - 'n8n_data:/home/node/.n8n'
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
 volumes:
   zookeeper_data:
     name: containers.zookeeper.data
@@ -114,4 +133,7 @@ volumes:
     driver: local
   elasticsearch_plugins:
     name: containers.elasticsearch.plugins
+    driver: local
+  n8n_data:
+    name: containers.n8n.data
     driver: local
